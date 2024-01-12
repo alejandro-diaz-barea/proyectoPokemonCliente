@@ -1,0 +1,34 @@
+body{
+  margin: 0;
+  font-family: 'Press Start 2P', cursive;
+}
+
+
+.header-container{
+  background-color: #FF0000    ;
+  color: white;
+  text-align: center;
+  padding: 10px 5% 30px; /* Reducir padding */
+  border-bottom: 10px solid #000;
+ 
+} 
+
+.header-content{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tituloWeb{
+  color: #1a1a1a;
+  font-size: 2em;
+  margin: 0;
+  font-family: 'Press Start 2P', cursive;
+}
+
+
+div.card-profile{
+  display: inline-grid;
+  align-items: center;
+  /* flex-direction: column; */
+}
