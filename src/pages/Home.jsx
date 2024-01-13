@@ -6,82 +6,49 @@ import Buscador from '../components/Buscador';
 
 const Home = () => {
   const [pokemones, setPokemones] = useState([]);
-  const [types, setTypes] = useState([]);
-  const [selectedType, setSelectedType] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [notFoundMessage, setNotFoundMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTypes = async () => {
-      const response = await fetch('https://pokeapi.co/api/v2/type');
-      if (response.ok) {
-        const data = await response.json();
-        setTypes(data.results);
-      }
-    };
-
-    fetchTypes();
-  }, []);
-
-  useEffect(() => {
-    const getPokemones = async () => {
-      let url;
-      let totalResults;
-
-      if (selectedType === '') {
-        url = `https://pokeapi.co/api/v2/pokemon?offset=${(currentPage - 1) * 20}&limit=20`;
+    const getPokemones = async (url) => {
+      try {
         const data = await fetch(url).then((res) => res.json());
-        totalResults = data.count;
+
+        if (!data.results || data.results.length === 0) {
+          setPokemones([]);
+          setNotFoundMessage('No se encontraron Pokémon.');
+          return;
+        }
+
+        const totalResults = data.count;
         setTotalPages(Math.ceil(totalResults / 20));
+
         setPokemones(
-          await Promise.all(
-            data.results.map(async (pokemon) => {
-              const pokeResponse = await fetch(pokemon.url);
-              const poke = await pokeResponse.json();
-              return {
-                id: poke.id,
-                name: poke.name,
-                img: poke.sprites.other.dream_world.front_default,
-              };
-            })
-          )
+          data.results.map((pokemon) => {
+            const pokemonId = pokemon.url.split('/').slice(-2, -1)[0];
+
+            return {
+              id: pokemonId,
+              name: pokemon.name,
+              img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+            };
+          })
         );
-      } else {
-        url = `https://pokeapi.co/api/v2/type/${selectedType}`;
-        const typeData = await fetch(url).then((res) => res.json());
-        const pokemonList = typeData.pokemon.slice((currentPage - 1) * 20, currentPage * 20);
-        totalResults = typeData.pokemon.length;
-        setTotalPages(Math.ceil(totalResults / 20));
-        setPokemones(
-          await Promise.all(
-            pokemonList.map(async (poke) => {
-              const pokeResponse = await fetch(poke.pokemon.url);
-              const pokeDetails = await pokeResponse.json();
-              return {
-                id: pokeDetails.id,
-                name: pokeDetails.name,
-                img: pokeDetails.sprites.other.dream_world.front_default,
-              };
-            })
-          )
-        );
+
+        setNotFoundMessage('');
+      } catch (error) {
+        console.error('Error al obtener Pokémon:', error);
       }
     };
 
-    getPokemones();
-  }, [currentPage, selectedType]);
-
-  useEffect(() => {
-    // Lógica de búsqueda basada en el término de búsqueda
-    const results = pokemones.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setSearchResults(results);
-  }, [searchTerm, pokemones]);
+    if (searchTerm !== '') {
+      getPokemones(`https://pokeapi.co/api/v2/pokemon?offset=0&limit=9999`);
+    }
+  }, [searchTerm]);
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
@@ -91,57 +58,105 @@ const Home = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
-  const handleTypeChange = (event) => {
-    setSelectedType(event.target.value);
-    setCurrentPage(1);
-  };
-
   const handlePokemonClick = (pokemonName) => {
     navigate(`/detalles-pokemon/${pokemonName}`);
   };
 
-  const handleSearch = (term) => {
+  const handleSearch = async (term) => {
     setSearchTerm(term);
+    setCurrentPage(1);
+
+    if (term !== '') {
+      try {
+        const searchUrl = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=9999`;
+        const searchData = await fetch(searchUrl).then((res) => res.json());
+
+        const searchResults = searchData.results.filter((pokemon) =>
+          pokemon.name.toLowerCase().includes(term.toLowerCase())
+        );
+
+        if (!searchResults || searchResults.length === 0) {
+          setPokemones([]);
+          setNotFoundMessage('No se encontraron Pokémon.');
+          return;
+        }
+
+        const totalResults = searchResults.length;
+        setTotalPages(Math.ceil(totalResults / 20));
+
+        const startIndex = (currentPage - 1) * 20;
+        const endIndex = startIndex + 20;
+        const paginatedResults = searchResults.slice(startIndex, endIndex);
+
+        setPokemones(
+          paginatedResults.map((pokemon) => {
+            const pokemonId = pokemon.url.split('/').slice(-2, -1)[0];
+
+            return {
+              id: pokemonId,
+              name: pokemon.name,
+              img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+            };
+          })
+        );
+
+        setNotFoundMessage('');
+      } catch (error) {
+        console.error('Error al obtener Pokémon para la búsqueda:', error);
+      }
+    }
   };
+
+  useEffect(() => {
+    const getPokemonesPage = async () => {
+      try {
+        let url;
+
+        if (searchTerm === '') {
+          url = `https://pokeapi.co/api/v2/pokemon?offset=${(currentPage - 1) * 20}&limit=20`;
+        } else {
+          url = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=9999`;
+        }
+
+        const data = await fetch(url).then((res) => res.json());
+
+        if (!data.results || data.results.length === 0) {
+          setPokemones([]);
+          setNotFoundMessage('No se encontraron Pokémon.');
+          return;
+        }
+
+        setPokemones(
+          data.results.map((pokemon) => {
+            const pokemonId = pokemon.url.split('/').slice(-2, -1)[0];
+
+            return {
+              id: pokemonId,
+              name: pokemon.name,
+              img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+            };
+          })
+        );
+
+        setNotFoundMessage('');
+      } catch (error) {
+        console.error('Error al obtener Pokémon:', error);
+      }
+    };
+
+    getPokemonesPage();
+  }, [currentPage, searchTerm]);
 
   return (
     <div className="pokemon-container">
       <h1 className="title">Pokemones</h1>
       <div>
         <Buscador onSearch={handleSearch} />
-
-        <label htmlFor="typeSelect">Filtrar por tipo: </label>
-        <select id="typeSelect" onChange={handleTypeChange} value={selectedType}>
-          <option value="">Todos</option>
-          {types.map((type) => (
-            <option key={type.name} value={type.name}>
-              {type.name}
-            </option>
-          ))}
-        </select>
-        <br />
-        <br />
-        <br />
-        <br />
       </div>
       <div className="cards-container">
-        {searchTerm !== '' ? (
-          // Muestra los resultados de la búsqueda si hay un término de búsqueda
-          searchResults.map((pokemon) => (
-            <div
-              className="pokemon-card"
-              key={pokemon.id}
-              onClick={() => handlePokemonClick(pokemon.name)}
-            >
-              <img src={pokemon.img} alt={pokemon.name} />
-              <div className="card-details">
-                <p className="pokemon-name">{pokemon.name}</p>
-                <AddToFavorites pokemonName={pokemon.name} />
-              </div>
-            </div>
-          ))
+        {notFoundMessage ? (
+          <p>{notFoundMessage}</p>
         ) : (
-          // Muestra todos los pokemones si no hay término de búsqueda
           pokemones.map((pokemon) => (
             <div
               className="pokemon-card"
@@ -157,15 +172,17 @@ const Home = () => {
           ))
         )}
       </div>
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Anterior
-        </button>
-        <span>Página {currentPage}</span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Siguiente
-        </button>
-      </div>
+      {searchTerm !== '' && (
+        <div className="pagination">
+          <button onClick={handlePrevPage} disabled={currentPage === 1}>
+            Anterior
+          </button>
+          <span>Página {currentPage}</span>
+          <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+            Siguiente
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
 import './Navbar.css';
 
+
 const Navbar = () => {
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
