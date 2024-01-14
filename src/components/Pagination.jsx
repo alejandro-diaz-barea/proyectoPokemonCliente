@@ -1,26 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Pagination = ({ onPageChange }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
-    onPageChange(currentPage + 1);
-  };
+const Pagination = ({ currentPage, totalPages, onPrevPage, onNextPage }) => {
+  const isPrevDisabled = currentPage === 1;
+  const isNextDisabled = currentPage === totalPages;
 
   const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-    onPageChange(currentPage - 1);
+    if (!isPrevDisabled) {
+      onPrevPage();
+    }
+  };
+
+  const handleNextPage = () => {
+    if (!isNextDisabled) {
+      onNextPage();
+    }
   };
 
   return (
     <div className="pagination">
-      <button onClick={handlePrevPage} disabled={currentPage === 1}>
+      <button onClick={handlePrevPage} disabled={isPrevDisabled}>
         Anterior
       </button>
-      <span>Página {currentPage}</span>
-      <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+      <span>{`${currentPage}/${totalPages}`}</span>
+      <button onClick={handleNextPage} disabled={isNextDisabled}>
         Siguiente
       </button>
     </div>

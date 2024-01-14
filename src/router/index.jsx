@@ -8,6 +8,9 @@ import PokemonDetails from "../pages/PokemonDetails";
 import NotFound from "../pages/NotFound";
 import Favoritos from "../pages/Favoritos";
 import Contacto from "../pages/Contacto";
+import Perfil from "../pages/Perfil"
+
+
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +68,15 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Favoritos />,
+      },
+    ],
+  },{
+    path: "/perfil",
+    element: <LayoutPrivate />,
+    children: [
+      {
+        index: true,
+        element: <Perfil/>,
       },
     ],
   }

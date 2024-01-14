@@ -27,7 +27,7 @@ h1.title {
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
-  height: 300px; /* Ajusta la altura según tus necesidades */
+  height: 300px; 
 }
 
 .pokemon-card:hover {
@@ -36,7 +36,7 @@ h1.title {
 
 .pokemon-card img {
   width: 80%;
-  height: 60%; /* Ajusta la altura de la imagen según tus necesidades */
+  height: 60%; 
   object-fit: contain;
   border-bottom: 1px solid #ddd;
 }

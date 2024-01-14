@@ -73,54 +73,57 @@ const CreateAccount = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     // Validación de campos
     const newErrors = {};
     if (formData.nombre.trim() === '') {
       newErrors.nombre = 'El nombre es obligatorio';
     }
-
+  
     if (formData.email.trim() === '') {
       newErrors.email = 'El correo electrónico es obligatorio';
     }
-
+  
     if (formData.password.trim() === '') {
       newErrors.password = 'La contraseña es obligatoria';
     } else if (formData.password.length < 8) {
       newErrors.password = 'La contraseña debe tener al menos 8 caracteres';
     }
-
+  
     if (formData.confirmPassword.trim() === '') {
       newErrors.confirmPassword = 'Debe repetir la contraseña';
     }
-
+  
     if (formData.password !== formData.confirmPassword) {
       newErrors.password = 'Las contraseñas no coinciden';
       newErrors.confirmPassword = 'Las contraseñas no coinciden';
     }
-
+  
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-
+  
+    // Establecer la foto predeterminada aquí
+    const pikachuPhoto = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/10080.png';
+  
     const cliente = {
       nombre: formData.nombre,
       email: formData.email,
       password: formData.password,
       favoritos: [], // Inicializa la lista de favoritos como un array vacío
+      pikachuPhoto, // Agrega la foto predeterminada al objeto cliente
     };
-
+  
     // Guardar en localStorage
     const existingClientes = JSON.parse(localStorage.getItem('clientes')) || [];
     const updatedClientes = [...existingClientes, cliente];
     localStorage.setItem('clientes', JSON.stringify(updatedClientes));
-
+  
     console.log('Cliente añadido a localStorage');
     alert('Cuenta creada');
-    login(cliente); // Marcar al usuario como autenticado
     navigate("/iniciar-sesion");
-
+  
     setFormData({
       nombre: '',
       email: '',
@@ -128,6 +131,7 @@ const CreateAccount = () => {
       confirmPassword: '',
     });
   };
+  
 
   return (
     <div className="create-account-container">
