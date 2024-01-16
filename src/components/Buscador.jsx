@@ -5,7 +5,6 @@ const Buscador = ({ onSearch }) => {
 
   useEffect(() => {
     //FUNCION QUE DEPENDE DEL TIEMPO
-  
     //Esta funcion lo que hace es llamar a onSearch cuando pasan 1000 milisegundos de inactividad (he puesto bastante tiempo para que se note)
     const delayFunction = setTimeout(() => {
       onSearch(searchTerm);
