@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 
 const Buscador = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+    //FUNCION QUE DEPENDE DEL TIEMPO
+  
+    //Esta funcion lo que hace es llamar a onSearch cuando pasan 1000 milisegundos de inactividad (he puesto bastante tiempo para que se note)
+    const delayFunction = setTimeout(() => {
       onSearch(searchTerm);
-    }, 300);
+    }, 1000)
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, onSearch]);
+    return () => clearTimeout(delayFunction)
+  }, [searchTerm, onSearch])
 
   const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+    setSearchTerm(e.target.value)
+  }
 
   return (
     <div>
@@ -26,7 +29,7 @@ const Buscador = ({ onSearch }) => {
         placeholder="Escribe el nombre del Pokémon"
       />
     </div>
-  );
-};
+  )
+}
 
-export default Buscador;
+export default Buscador

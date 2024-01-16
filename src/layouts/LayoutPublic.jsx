@@ -1,7 +1,7 @@
 
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
-import { Outlet } from 'react-router-dom';
+import Footer from '../components/Footer'
+import Navbar from '../components/Navbar'
+import { Outlet } from 'react-router-dom'
 
 const LayoutPublic = () => {
   return (
@@ -10,7 +10,7 @@ const LayoutPublic = () => {
       <Outlet />
       <Footer/>
     </div>
-  );
-};
+  )
+}
 
-export default LayoutPublic;
+export default LayoutPublic

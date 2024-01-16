@@ -32,3 +32,21 @@ div.card-profile{
   align-items: center;
   /* flex-direction: column; */
 }
+
+
+.logo {
+  width: 40%;
+  height: 30%;
+}
+
+.header-content a {
+  color: white;
+  text-decoration: none;
+}
+
+.card-profile p {
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+

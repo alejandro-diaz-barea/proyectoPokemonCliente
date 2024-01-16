@@ -1,9 +1,10 @@
-import React from 'react'
+import '../assets/css/components/Footer.css'
+
 
 const Footer = () => {
   return (
-    <footer style={{ backgroundColor: '#FF0000', padding: '1rem', borderRadius: '0 0 10px 10px' }}>
-      <p style={{ color: '#FFFFFF', textAlign: 'center' }}>
+    <footer className="footer-container">
+      <p className="footer-text">
         &copy; {new Date().getFullYear()} Pokemon Data - Todos los derechos reservados.
       </p>
     </footer>

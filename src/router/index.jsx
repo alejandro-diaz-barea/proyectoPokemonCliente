@@ -1,13 +1,13 @@
-import { createBrowserRouter } from "react-router-dom";
-import LayoutPublic from "../layouts/LayoutPublic";
-import LayoutPrivate from "../layouts/LayoutPrivate";
-import Home from "../pages/Home";
-import CreateAcount from "../pages/CreateAcount";
-import Login from "../pages/Login";
-import PokemonDetails from "../pages/PokemonDetails";
-import NotFound from "../pages/NotFound";
-import Favoritos from "../pages/Favoritos";
-import Contacto from "../pages/Contacto";
+import { createBrowserRouter } from "react-router-dom"
+import LayoutPublic from "../layouts/LayoutPublic"
+import LayoutPrivate from "../layouts/LayoutPrivate"
+import Home from "../pages/Home"
+import CreateAcount from "../pages/CreateAcount"
+import Login from "../pages/Login"
+import PokemonDetails from "../pages/PokemonDetails"
+import NotFound from "../pages/NotFound"
+import Favoritos from "../pages/Favoritos"
+import Contacto from "../pages/Contacto"
 import Perfil from "../pages/Perfil"
 
 

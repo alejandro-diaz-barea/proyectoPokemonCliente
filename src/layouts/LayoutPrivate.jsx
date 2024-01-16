@@ -6,7 +6,7 @@ import Footer from '../components/Footer.jsx'
 
 const LayoutPrivate = () => {
 
-  const {user, setUser} = useContext(UserContext)
+  const {user} = useContext(UserContext)
 
   return ( 
     <>

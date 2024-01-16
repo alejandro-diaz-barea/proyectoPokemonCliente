@@ -1,3 +1,4 @@
+import '../assets/css/pages/NotFound.css'
 
 const NotFound = () => {
   return (
@@ -6,7 +7,7 @@ const NotFound = () => {
       <p>Lo siento, no pudimos encontrar la página que estás buscando.</p>
       <p>¡Parece que este Pokémon se escapó!</p>
       <img
-        src="https://example.com/path-to-your-pokemon-image.jpg"
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png"
         alt="Pokémon Lost"
         className="pokemon-image"
       />
