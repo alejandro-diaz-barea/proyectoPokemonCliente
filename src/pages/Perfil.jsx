@@ -39,6 +39,13 @@ const Profile = () => {
   // Seleccionar nueva foto de perfil
   const handleSelectPhoto = (newPhoto) => {
     setUser({ ...user, pikachuPhoto: newPhoto })
+
+    // Guardar el enlace de la foto de perfil en el localStorage
+    const existingClientes = JSON.parse(localStorage.getItem('clientes')) || []
+    const updatedClientes = existingClientes.map((cliente) =>
+      cliente.email === user.email ? { ...cliente, pikachuPhoto: newPhoto } : cliente
+    )
+    localStorage.setItem('clientes', JSON.stringify(updatedClientes))
   }
 
   // Cerrar sesión
