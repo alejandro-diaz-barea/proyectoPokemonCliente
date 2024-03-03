@@ -11,21 +11,11 @@ const UserProvider = ({ children }) => {
   // Estado que almacena la información del usuario
   const [user, setUser] = useState(null)
 
-  // Lista de fotos de Pikachu para elegir los fondo de perfil
-  const pikachuPhotos = [
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/10080.png',
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/10081.png',
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/10083.png',
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/10085.png',
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/10084.png',
-  ]
-
   // Función para realizar el inicio de sesión del usuario
   const login = (userData) => {
     setLoggedIn(true)
     setUser({
       ...userData,
-      pikachuPhoto: pikachuPhotos[0], // Tomamos la primera foto como predeterminada
     })
   }
 
@@ -45,7 +35,7 @@ const UserProvider = ({ children }) => {
 
   // Proporciona el contexto y sus valores a los componentes secundarios
   return (
-    <UserContext.Provider value={{ loggedIn, user, login, logout, updateUser, pikachuPhotos, setUser }}>
+    <UserContext.Provider value={{ loggedIn, user,setUser, login, logout, updateUser }}>
       {children}
     </UserContext.Provider>
   )

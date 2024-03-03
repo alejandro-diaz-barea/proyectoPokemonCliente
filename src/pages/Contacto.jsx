@@ -1,132 +1,136 @@
-import { useState } from 'react'
-import '../assets/css/pages/Contacto.css'
+import { useState } from 'react';
+import '../assets/css/pages/Contacto.css';
 
 const Contacto = () => {
+  const currentYear = new Date().getFullYear();
+
   const initialFormData = {
     name: '',
     email: '',
     rating: '',
     message: '',
-    incidentDate: '',
-  }
+    incidentDate: `${currentYear}-01-01`,
+  };
 
-  const [formData, setFormData] = useState(initialFormData)
-  const [formErrors, setFormErrors] = useState({})
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false)
+  const [formData, setFormData] = useState(initialFormData);
+  const [formErrors, setFormErrors] = useState({});
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-    }))
+    }));
 
     // Limpiar error cuando se cambia el valor del campo
     setFormErrors((prevErrors) => ({
       ...prevErrors,
       [name]: '',
-    }))
+    }));
 
     // Marcar el formulario como no enviado
-    setIsFormSubmitted(false)
-  }
+    setIsFormSubmitted(false);
+  };
 
   const validateEmail = (email) => {
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    return re.test(String(email).toLowerCase())
-  }
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
 
-  // Validar cuando salgan del campo
   const handleBlur = (e) => {
-    const { name, value } = e.target
-    const newErrors = { ...formErrors }
+    const { name, value } = e.target;
+    const newErrors = { ...formErrors };
 
     switch (name) {
       case 'name':
-        newErrors[name] = value.trim() === '' ? 'El nombre es obligatorio' : ''
-        break
+        newErrors[name] = value.trim() === '' ? 'El nombre es obligatorio' : '';
+        break;
       case 'email':
-        newErrors[name] = value.trim() === '' ? 'El correo electrónico es obligatorio' : ''
+        newErrors[name] = value.trim() === '' ? 'El correo electrónico es obligatorio' : '';
         if (value.trim() !== '' && !validateEmail(value)) {
-          newErrors[name] = 'Ingrese un correo electrónico válido'
+          newErrors[name] = 'Ingrese un correo electrónico válido';
         }
-        break
+        break;
       case 'rating':
         newErrors[name] =
           value.trim() === '' || isNaN(value) || value < 1 || value > 10
             ? 'La valoración debe estar entre 1 y 10'
-            : ''
-        break
+            : '';
+        break;
       case 'message':
-        newErrors[name] = value.trim().length < 15 ? 'El mensaje debe tener al menos 15 caracteres' : ''
-        break
+        newErrors[name] = value.trim().length < 15 ? 'El mensaje debe tener al menos 15 caracteres' : '';
+        break;
       case 'incidentDate':
-        newErrors[name] = value.trim() === '' ? 'La fecha de la incidencia es obligatoria' : ''
-        break
+        if (value < `${currentYear}-01-01`) {
+          newErrors[name] = `La fecha debe ser igual o posterior al ${currentYear}-01-01`;
+        } else {
+          newErrors[name] = '';
+        }
+        break;
       default:
-        break
+        break;
     }
 
-    setFormErrors(newErrors)
-  }
+    setFormErrors(newErrors);
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const newErrors = {}
+    const newErrors = {};
 
-    // Validar campos del formulario
     Object.keys(formData).forEach((key) => {
-      const value = formData[key]
+      const value = formData[key];
       switch (key) {
         case 'name':
           if (value.trim() === '') {
-            newErrors[key] = 'El nombre es obligatorio'
+            newErrors[key] = 'El nombre es obligatorio';
           }
-          break
+          break;
         case 'email':
           if (value.trim() === '') {
-            newErrors[key] = 'El correo electrónico es obligatorio'
+            newErrors[key] = 'El correo electrónico es obligatorio';
           } else if (!validateEmail(value)) {
-            newErrors[key] = 'Ingrese un correo electrónico válido'
+            newErrors[key] = 'Ingrese un correo electrónico válido';
           }
-          break
+          break;
         case 'rating':
           if (value.trim() === '') {
-            newErrors[key] = 'La valoración es obligatoria'
+            newErrors[key] = 'La valoración es obligatoria';
           } else {
-            const ratingValue = parseInt(value, 10)
+            const ratingValue = parseInt(value, 10);
             if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 10) {
-              newErrors[key] = 'La valoración debe estar entre 1 y 10'
+              newErrors[key] = 'La valoración debe estar entre 1 y 10';
             }
           }
-          break
+          break;
         case 'message':
           if (value.trim().length < 15) {
-            newErrors[key] = 'El mensaje debe tener al menos 15 caracteres'
+            newErrors[key] = 'El mensaje debe tener al menos 15 caracteres';
           }
-          break
-        case 'incidentDate': 
+          break;
+        case 'incidentDate':
           if (value.trim() === '') {
-            newErrors[key] = 'La fecha de la incidencia es obligatoria'
+            newErrors[key] = 'La fecha de la incidencia es obligatoria';
+          } else if (value < `${currentYear}-01-01`) {
+            newErrors[key] = `La fecha debe ser igual o posterior al ${currentYear}-01-01`;
           }
-          break
+          break;
         default:
-          break
+          break;
       }
-    })
+    });
 
-    setFormErrors(newErrors)
+    setFormErrors(newErrors);
 
     // Enviar formulario si no hay errores
     if (Object.keys(newErrors).length === 0) {
-      console.log('Formulario enviado:', formData)
-
-      // Marcar el formulario como enviado y limpiar los campos
-      setIsFormSubmitted(true)
-      setFormData(initialFormData)
+      console.log('Formulario enviado:', formData);
+      setIsFormSubmitted(true);
+      setFormData(initialFormData);
     }
-  }
+  };
 
   return (
     <section className="contact-container">
@@ -214,6 +218,7 @@ const Contacto = () => {
           value={formData.incidentDate}
           onChange={handleChange}
           onBlur={handleBlur}
+          min={`${currentYear}-01-01`} 
           required
         />
         {formErrors.incidentDate && (
@@ -229,7 +234,7 @@ const Contacto = () => {
         )}
       </form>
     </section>
-  )
-}
+  );
+};
 
-export default Contacto
+export default Contacto;

@@ -8,10 +8,8 @@ import PokemonCard from '../components/PokemonCard';
 import { UserContext } from '../context/userContext';
 import { useContext } from 'react';
 
-
 const Home = () => {
   const { user } = useContext(UserContext);
-
 
   const [pokemones, setPokemones] = useState([]);
   const [notFoundMessage, setNotFoundMessage] = useState('');
@@ -19,20 +17,20 @@ const Home = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({ type: '' });
-  const [searchPage, setSearchPage] = useState(1); // Página para la búsqueda
+  const [searchPage, setSearchPage] = useState(1);
   const navigate = useNavigate();
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
-      setSearchPage(1); // Reinicia la página de búsqueda al cambiar de página
+      setSearchPage(1);
     }
   };
 
   const handlePrevPage = () => {  
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
-      setSearchPage(1); // Reinicia la página de búsqueda al cambiar de página
+      setSearchPage(1);
     }
   };
 
@@ -41,22 +39,21 @@ const Home = () => {
   };
 
   const handlePokemonClick = (pokemonName) => {
-    if(!user){
-      navigate("/iniciar-sesion")
-    }
-    else{
+    if (!user) {
+      navigate("/iniciar-sesion");
+    } else {
       navigate(`/detalles-pokemon/${pokemonName}`);
     }
   };
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    setSearchPage(1); // Reiniciar la página de búsqueda al realizar una búsqueda
+    setSearchPage(1);
   };
 
   const handleFilterChange = (selectedType) => {
     setSelectedFilters({ type: selectedType });
-    setSearchPage(1); // Reiniciar la página de búsqueda al cambiar el filtro
+    setSearchPage(1);
   };
 
   const getPokemones = async () => {
@@ -64,7 +61,6 @@ const Home = () => {
       const offset = (currentPage - 1) * 20;
       let baseurl = 'https://pokeapi.co/api/v2/pokemon';
 
-      // Aplicar filtro por tipo a la URL si es necesario
       if (selectedFilters.type && !searchTerm) {
         const typeResponse = await fetch(`https://pokeapi.co/api/v2/type/${selectedFilters.type}`);
         const typeData = await typeResponse.json();
@@ -88,7 +84,6 @@ const Home = () => {
         setTotalPages(Math.ceil(results.length / 20));
         setPokemones(newPokemones);
       } else {
-        // Obtener la cantidad total de Pokémon solo cuando no hay término de búsqueda
         if (!searchTerm) {
           const totalPokemonsResponse = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
           const totalPokemonsData = await totalPokemonsResponse.json();
@@ -109,7 +104,6 @@ const Home = () => {
             const pokeResponse = await fetch(pokemon.url);
             const poke = await pokeResponse.json();
 
-            // Verificar si no hay filtro de tipo o si coincide con el filtro
             if (!selectedFilters.type || poke.types.some((type) => type.type.name === selectedFilters.type)) {
               return {
                 id: poke.id,

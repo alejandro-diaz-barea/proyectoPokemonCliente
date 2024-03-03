@@ -3,45 +3,38 @@ import { useParams } from 'react-router-dom'
 import '../assets/css/pages/PokemonDetails.css'
 
 const PokemonDetails = () => {
-  // Obtener el nombre del pokémon de los parámetros de la URL
   const { name } = useParams()
-
-  // Estado para almacenar los detalles del pokémon
   const [pokemon, setPokemon] = useState(null)
+  const [error, setError] = useState(null)
 
-  // Efecto para cargar los detalles del pokémon al montar el componente
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
-
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
 
-        // dice si la solicitud fue exitosa
         if (!response.ok) {
           throw new Error('No se pudo encontrar el pokémon')
         }
 
         const data = await response.json()
-
-        // Actualizar el estado con los detalles del pokémon
         setPokemon(data)
       } catch (error) {
-        // Manejar errores de la solicitud
         console.error(error)
-        alert('Ocurrió un error al cargar los detalles del pokémon');
+        setError('Ocurrió un error al cargar los detalles del pokémon') 
       }
     }
 
-    // Llamar a la función para cargar los detalles
     fetchPokemon()
   }, [name])
 
-  // Verificar si los detalles del pokémon están cargando
+  if (error) {
+    return <div>{error}</div>
+  }
+
   if (!pokemon) {
     return <div>Cargando...</div>
   }
 
-  // Renderizar los detalles del pokémon
   return (
     <div className="details-container">
       <img
