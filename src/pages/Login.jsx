@@ -4,82 +4,97 @@ import { useNavigate } from 'react-router-dom'
 import '../assets/css/pages/login.css'
 
 const Login = () => {
-  // Estado para almacenar los datos de inicio de sesión
-  const [loginData, setLoginData] = useState({
+  const initialLoginData = {
     email: '',
-    password: '',
-  })
+    password: ''
+  }
 
-  // Estado para manejar errores durante el inicio de sesión
+  const [loginData, setLoginData] = useState(initialLoginData)
   const [errors, setErrors] = useState({})
-
   const { login } = useContext(UserContext)
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  // Manejar el cambio en los campos de entrada
   const handleChange = (e) => {
     setLoginData({
       ...loginData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     })
 
-    // Limpiar errores al cambiar el valor
     setErrors({
       ...errors,
-      [e.target.name]: '',
+      [e.target.name]: ''
     })
   }
 
-  // Validar si el campo está vacío al perder el foco
-  const validar = (e) => {
-    if (e.target.value.trim() === '') {
-      mostrarAlerta(`El campo ${e.target.name} es obligatorio`, e.target.parentElement)
-    } else {
-      limpiarAlerta(e.target.parentElement)
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    return re.test(String(email).toLowerCase())
+  }
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    const newErrors = { ...errors }
+
+    switch (name) {
+      case 'email':
+        newErrors[name] = value.trim() === '' ? 'El correo electrónico es obligatorio' : ''
+        if (value.trim() !== '' && !validateEmail(value)) {
+          newErrors[name] = 'Ingrese un correo electrónico válido'
+        }
+        break
+      case 'password':
+        newErrors[name] = value.trim() === '' ? 'La contraseña es obligatoria' : ''
+        break
+      default:
+        break
     }
+
+    setErrors(newErrors)
   }
 
-  // Limpiar alerta de error
-  const limpiarAlerta = (referencia) => {
-    const alerta = referencia.querySelector('.bg-red-600')
-    if (alerta) {
-      alerta.remove()
-    }
-  }
-
-  // Mostrar alerta de error
-  const mostrarAlerta = (mensaje, referencia) => {
-    limpiarAlerta(referencia)
-
-    const error = document.createElement('P')
-    error.textContent = mensaje
-    error.classList.add('bg-red-600', 'text-center', 'text-white', 'p-2')
-    referencia.appendChild(error)
-  }
-
-  // Manejar el intento de inicio de sesión
-  const handleLogin = async (e) => {
+  // Función para manejar el envío del formulario
+  const handleSubmit = (e) => {
     e.preventDefault()
 
-    // Verificar las credenciales en localStorage
-    const existingClientes = JSON.parse(localStorage.getItem('clientes')) || []
-    const existingCliente = existingClientes.find(
-      (cliente) => cliente.email === loginData.email && cliente.password === loginData.password
-    )
+    const newErrors = {}
 
-    if (existingCliente) {
-      console.log('Inicio de sesión exitoso')
-      login(existingCliente) // Almacena el cliente completo en el contexto
-      navigate('/')
-    } else {
-      setErrors({ general: 'El usuario o la contraseña es incorrecto' })
+    // Validación de correo electrónico
+    if (loginData.email.trim() === '') {
+      newErrors.email = 'El correo electrónico es obligatorio'
+    } else if (!validateEmail(loginData.email)) {
+      newErrors.email = 'Ingrese un correo electrónico válido'
+    }
+
+    // Validación de contraseña
+    if (loginData.password.trim() === '') {
+      newErrors.password = 'La contraseña es obligatoria'
+    }
+
+    setErrors(newErrors)
+
+    // Si no hay errores, proceder con el inicio de sesión
+    if (Object.keys(newErrors).length === 0) {
+      const existingClientes = JSON.parse(localStorage.getItem('clientes')) || []
+      const existingCliente = existingClientes.find(
+        (cliente) => cliente.email === loginData.email && cliente.password === loginData.password
+      )
+
+      // Comprobar si el cliente existe y realizar el inicio de sesión
+      if (existingCliente) {
+        console.log('Inicio de sesión exitoso')
+        login(existingCliente)
+        navigate('/')
+      } else {
+        // Mostrar error si las credenciales son incorrectas
+        setErrors({ general: 'El usuario o la contraseña es incorrecto' })
+      }
     }
   }
 
   return (
     <div className="login-container">
       <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleSubmit}>
         <label>
           Correo electrónico:
           <input
@@ -87,10 +102,11 @@ const Login = () => {
             name="email"
             value={loginData.email}
             onChange={handleChange}
-            onBlur={validar}
+            onBlur={handleBlur}
+            className="input-field"
             required
           />
-          {errors.email && <p className="bg-red-600 text-center text-white p-2">{errors.email}</p>}
+          {errors.email && <p className="error-message">{errors.email}</p>}
         </label>
         <label>
           Contraseña:
@@ -99,18 +115,18 @@ const Login = () => {
             name="password"
             value={loginData.password}
             onChange={handleChange}
+            onBlur={handleBlur}
+            className="input-field"
             required
           />
-          {errors.password && (
-            <p className="bg-red-600 text-center text-white p-2">{errors.password}</p>
-          )}
+          {errors.password && <p className="error-message">{errors.password}</p>}
         </label>
-        {errors.general && (
-          <p className="bg-red-600 text-center text-white p-2">{errors.general}</p>
-        )}
-        <button type="submit" className="formButton">
-          Iniciar Sesión
-        </button>
+        {errors.general && <p className="error-message">{errors.general}</p>}
+        <div className="button-container">
+          <button type="submit" className="formButton">
+            Iniciar Sesión
+          </button>
+        </div>
       </form>
     </div>
   )

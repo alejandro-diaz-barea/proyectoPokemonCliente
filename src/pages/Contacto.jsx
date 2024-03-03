@@ -1,85 +1,135 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import '../assets/css/pages/Contacto.css'
 
-
 const Contacto = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: '',
     email: '',
     rating: '',
     message: '',
-  });
+    incidentDate: '',
+  }
 
-  const [formErrors, setFormErrors] = useState({});
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [formData, setFormData] = useState(initialFormData)
+  const [formErrors, setFormErrors] = useState({})
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false)
 
-  // Función para manejar el cambio en los campos del formulario
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }))
 
-    // Limpiar errores al cambiar el valor
-    setFormErrors({
-      ...formErrors,
-      [e.target.name]: '',
-    });
+    // Limpiar error cuando se cambia el valor del campo
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',
+    }))
 
-    // Resetear el mensaje de enviado cuando se realiza un cambio
-    setIsFormSubmitted(false);
-  };
+    // Marcar el formulario como no enviado
+    setIsFormSubmitted(false)
+  }
 
-  // Función para manejar el envío del formulario
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    return re.test(String(email).toLowerCase())
+  }
+
+  // Validar cuando salgan del campo
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    const newErrors = { ...formErrors }
+
+    switch (name) {
+      case 'name':
+        newErrors[name] = value.trim() === '' ? 'El nombre es obligatorio' : ''
+        break
+      case 'email':
+        newErrors[name] = value.trim() === '' ? 'El correo electrónico es obligatorio' : ''
+        if (value.trim() !== '' && !validateEmail(value)) {
+          newErrors[name] = 'Ingrese un correo electrónico válido'
+        }
+        break
+      case 'rating':
+        newErrors[name] =
+          value.trim() === '' || isNaN(value) || value < 1 || value > 10
+            ? 'La valoración debe estar entre 1 y 10'
+            : ''
+        break
+      case 'message':
+        newErrors[name] = value.trim().length < 15 ? 'El mensaje debe tener al menos 15 caracteres' : ''
+        break
+      case 'incidentDate':
+        newErrors[name] = value.trim() === '' ? 'La fecha de la incidencia es obligatoria' : ''
+        break
+      default:
+        break
+    }
+
+    setFormErrors(newErrors)
+  }
+
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    // Validación de campos
-    const newErrors = {};
+    const newErrors = {}
 
-    if (formData.name.trim() === '') {
-      newErrors.name = 'El nombre es obligatorio';
-    }
-
-    if (formData.email.trim() === '') {
-      newErrors.email = 'El correo electrónico es obligatorio';
-    }
-
-    // Validación para el campo de Valoración (rating)
-    if (formData.rating.trim() === '') {
-      newErrors.rating = 'La valoración es obligatoria';
-    } else {
-      const ratingValue = parseInt(formData.rating, 10);
-      if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 10) {
-        newErrors.rating = 'La valoración debe estar entre 1 y 10';
+    // Validar campos del formulario
+    Object.keys(formData).forEach((key) => {
+      const value = formData[key]
+      switch (key) {
+        case 'name':
+          if (value.trim() === '') {
+            newErrors[key] = 'El nombre es obligatorio'
+          }
+          break
+        case 'email':
+          if (value.trim() === '') {
+            newErrors[key] = 'El correo electrónico es obligatorio'
+          } else if (!validateEmail(value)) {
+            newErrors[key] = 'Ingrese un correo electrónico válido'
+          }
+          break
+        case 'rating':
+          if (value.trim() === '') {
+            newErrors[key] = 'La valoración es obligatoria'
+          } else {
+            const ratingValue = parseInt(value, 10)
+            if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 10) {
+              newErrors[key] = 'La valoración debe estar entre 1 y 10'
+            }
+          }
+          break
+        case 'message':
+          if (value.trim().length < 15) {
+            newErrors[key] = 'El mensaje debe tener al menos 15 caracteres'
+          }
+          break
+        case 'incidentDate': 
+          if (value.trim() === '') {
+            newErrors[key] = 'La fecha de la incidencia es obligatoria'
+          }
+          break
+        default:
+          break
       }
-    }
+    })
 
-    if (formData.message.trim() === '') {
-      newErrors.message = 'El mensaje es obligatorio';
-    }
+    setFormErrors(newErrors)
 
-    // Actualizar los errores del formulario
-    setFormErrors(newErrors);
-
-    // Si no hay errores, puedes enviar el formulario
+    // Enviar formulario si no hay errores
     if (Object.keys(newErrors).length === 0) {
-      // Realiza la lógica de envío del formulario aquí
-      console.log('Formulario enviado:', formData);
+      console.log('Formulario enviado:', formData)
 
-      // Mostrar el mensaje de enviado y resetear el formulario
-      setIsFormSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        rating: '',
-        message: '',
-      });
+      // Marcar el formulario como enviado y limpiar los campos
+      setIsFormSubmitted(true)
+      setFormData(initialFormData)
     }
-  };
+  }
 
   return (
-    <div className="contact-container">
+    <section className="contact-container">
       <h1 className="contact-title">Contáctanos</h1>
       <form className="contact-form" onSubmit={handleSubmit}>
         <label htmlFor="name" className="contact-label">
@@ -92,6 +142,7 @@ const Contacto = () => {
           className="contact-input"
           value={formData.name}
           onChange={handleChange}
+          onBlur={handleBlur}
           required
         />
         {formErrors.name && (
@@ -108,6 +159,7 @@ const Contacto = () => {
           className="contact-input"
           value={formData.email}
           onChange={handleChange}
+          onBlur={handleBlur}
           required
         />
         {formErrors.email && (
@@ -121,8 +173,13 @@ const Contacto = () => {
           type="number"
           id="rating"
           name="rating"
+          className="contact-input"
           value={formData.rating}
           onChange={handleChange}
+          onBlur={handleBlur}
+          min="1"
+          max="10"
+          required
         />
         {formErrors.rating && (
           <p className="error-message">{formErrors.rating}</p>
@@ -139,10 +196,28 @@ const Contacto = () => {
           cols="50"
           value={formData.message}
           onChange={handleChange}
+          onBlur={handleBlur}
           required
         ></textarea>
         {formErrors.message && (
           <p className="error-message">{formErrors.message}</p>
+        )}
+
+        <label htmlFor="incidentDate" className="contact-label">
+          Fecha de la incidencia:
+        </label>
+        <input
+          type="date"
+          id="incidentDate"
+          name="incidentDate"
+          className="contact-input"
+          value={formData.incidentDate}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          required
+        />
+        {formErrors.incidentDate && (
+          <p className="error-message">{formErrors.incidentDate}</p>
         )}
 
         <button type="submit" className="contact-button">
@@ -153,8 +228,8 @@ const Contacto = () => {
           <p className="success-message">¡Formulario enviado con éxito!</p>
         )}
       </form>
-    </div>
-  );
-};
+    </section>
+  )
+}
 
-export default Contacto;
+export default Contacto

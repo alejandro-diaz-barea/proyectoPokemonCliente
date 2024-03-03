@@ -1,48 +1,73 @@
 .create-account-container {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    text-align: center;
-    color: #333;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  label {
-    margin-bottom: 10px;
-  }
-  
-  input {
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button.formButton {
-    background-color: #00189D;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-height: 64.2vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  }
-  
-  button.formButton:hover {
-    background-color: #011171;
-  }
-  
+.create-account-title {
+  text-align: center;
+  color: #333;
+}
+
+.create-account-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  width: 95%;
+  margin: auto;
+}
+
+.create-account-label {
+  margin-bottom: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.create-account-input {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 95%;
+}
+
+.formButton.create-account-button {
+  background-color: #00189D;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 95%;
+  margin-top: 25px;
+}
+
+.formButton.create-account-button:hover {
+  background-color: #011171;
+}
+
+.error-message {
+  color: #ff0000;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.success-message {
+  text-align: center;
+  color: #008000;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  width: 100%;
+  font-size: 1rem;
+}
