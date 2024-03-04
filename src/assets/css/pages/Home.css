@@ -5,11 +5,23 @@ h1.title {
 .pokemon-container {
   text-align: center;
   padding: 20px;
+  min-height: 70vh;
 }
 
 .filter-container {
   margin-bottom: 20px;
 }
+.not-found-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Ajusta la altura según tus necesidades */
+  font-size: 1.5rem;
+  color: red;
+  max-width: 90%; /* Establece un ancho máximo */
+  margin: 0 auto; /* Centra horizontalmente */
+}
+
 
 .cards-container {
   display: grid;
